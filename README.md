@@ -1,4 +1,4 @@
-# pxt-oled-ssd1306-test
+# pxt-oled-M5-SSH1107-1.3-128x64
 
 
 
@@ -13,9 +13,7 @@ MIT License
 
 See License-file
 
-Copyright (c) 2018 - 2019 Banbury, Ingo Hoffmann, Paul Rogalinski & Michael Klein
-
-Original code from https://github.com/Banbury/pxt-calliope-oled96 Thanks to Banbury for the great work!
+Original code from https://github.com/MKleinSB/pxt-OLED-SSD1306
 
 Changes by ncc-74205 15.08.21
 
