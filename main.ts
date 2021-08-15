@@ -128,7 +128,7 @@ namespace oledssd1306 {
      * Schreibt einen String an der aktuellen Cursorposition auf das Display.
      */
     //% blockId=oledssd1306_write_string
-    //% block="schreibe Text %s|auf das Display"
+    //% block="schreibe einen Text %s|auf das Display"
     export function writeString(s: string) {
         putChar('C');
         for (let c of s) {
