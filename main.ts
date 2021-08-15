@@ -10,7 +10,7 @@
 // Changes by kleinswelt 13.08.2019
 // MIT License Copyright (c) 2019 Michael Klein
 
-//% color=#9F79EE icon="\uf108" block="M5 SSH1107 128x64 OLED"
+//% color=#9F79EE icon="\uf108" block="M5-SSH1107 128x64 OLED"
 namespace oledssd1306 {
     /**
      * Setzt das Display zurück und löscht es.
@@ -128,9 +128,9 @@ namespace oledssd1306 {
      * Schreibt einen String an der aktuellen Cursorposition auf das Display.
      */
     //% blockId=oledssd1306_write_string
-    //% block="schreibe a%s|auf das Display"
+    //% block="schreibe den Text %s|auf das Display"
     export function writeString(s: string) {
-        putChar('A');
+        putChar('B');
         for (let c of s) {
             putChar(c);
         }
