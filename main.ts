@@ -20,9 +20,9 @@ namespace oledssd1306 {
     //% block="initialisiere Display"
     // initdisplaycodes from https://gist.githubusercontent.com/pulsar256/564fda3b9e8fc6b06b89/raw/4bb559d4088e42f7b4859a8533be920434818617/ssd1306_init.c
     export function initDisplay(): void {
-        cmd(0xAE);  // Set display OFF		
+        cmd(0xAE);  // Set display OFF
         cmd(0xD5);  // Set Display Clock Divide Ratio / OSC Frequency 0xD4
-        cmd(0x80);  // Display Clock Divide Ratio / OSC Frequency 
+        cmd(0x80);  // Display Clock Divide Ratio / OSC Frequency
         cmd(0xA8);  // Set Multiplex Ratio
         cmd(0x3F);  // Multiplex Ratio for 128x64 (64-1)
         cmd(0xD3);  // Set Display Offset
@@ -82,7 +82,7 @@ namespace oledssd1306 {
     /**
      * Bewegt den Cursor an eine neue Position.
      */
-    //% row.min=0 row.max=7 
+    //% row.min=0 row.max=7
     //% column.min=0 column.max=15
     //% blockId=oledssd1306_set_text
     //% block="setze Cursor auf Zeile %row| und Spalte %column"
@@ -128,7 +128,7 @@ namespace oledssd1306 {
      * Schreibt einen String an der aktuellen Cursorposition auf das Display.
      */
     //% blockId=oledssd1306_write_string
-    //% block="schreibe %s|auf das Display"
+    //% block="schreibe a%s|auf das Display"
     export function writeString(s: string) {
         putChar('A');
         for (let c of s) {
