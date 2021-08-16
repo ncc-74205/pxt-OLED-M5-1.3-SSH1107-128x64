@@ -1,37 +1,32 @@
 /**
- * Provides functions to control any SSD1306 OLED 0.96" from a Calliope Mini.
+ * Provides functions to control an M5 SH1107 OLED 1.3" from a Calliope.
  */
 
-// Maincode from https://github.com/Banbury/pxt-calliope-oled96
-// MIT License Copyright (c) 2018 Banbury Copyright (c) 2018 Banbury
-// Thanks to Supereugen for ExtendedCharactersCode
-// https://github.com/SuperEugen/pxt-calliope-grove-ssd1327/blob/master/pxt-calliope-grove-ssd1327.ts
-// MIT License Copyright (c) 2018 Ingo Hoffmann
-// Changes by kleinswelt 13.08.2019
-// MIT License Copyright (c) 2019 Michael Klein
+// Original code from https://github.com/MKleinSB/pxt-OLED-SSD1306
+// MIT License
 
-//% color=#9F79EE icon="\uf108" block="M5-SSH1107 128x64 OLED"
-namespace oledssd1306 {
+//% color=#9F79EE icon="\uf108" block="M5 SH1107 OLED 128x64"
+namespace oledm5sh1107 {
     /**
      * Setzt das Display zurück und löscht es.
      * Sollte beim Start des Programms verwendet werden.
      */
-    //% blockId=oledssd1306_init_display
+    //% blockId=oledm5sh1107_init_display
     //% block="initialisiere Display"
-    // initdisplaycodes from https://gist.githubusercontent.com/pulsar256/564fda3b9e8fc6b06b89/raw/4bb559d4088e42f7b4859a8533be920434818617/ssd1306_init.c
     export function initDisplay(): void {
         cmd(0xAE);  // Set display OFF
         cmd(0xD5);  // Set Display Clock Divide Ratio / OSC Frequency 0xD4
         cmd(0x80);  // Display Clock Divide Ratio / OSC Frequency
         cmd(0xA8);  // Set Multiplex Ratio
-        cmd(0x3F);  // Multiplex Ratio for 128x64 (64-1)
+        cmd(0x3F);  // Multiplex Ratio for 128x64 (64-1) (3F)
         cmd(0xD3);  // Set Display Offset
-        cmd(0x00);  // Display Offset
-        cmd(0x40);  // Set Display Start Line
+        cmd(0x60);  // Display Offset
+        cmd(0xDC);  // Set Display Start Line
+        cmd(0x00);  // Display Start Line
         cmd(0x8D);  // Set Charge Pump
         cmd(0x14);  // Charge Pump (0x10 External, 0x14 Internal DC/DC)
-        cmd(0xA1);  // Set Segment Re-Map
-        cmd(0xC8);  // Set Com Output Scan Direction
+        cmd(0xA0);  // Set Segment Re-Map //A1
+        cmd(0xC0);  // Set Com Output Scan Direction //C8
         cmd(0xDA);  // Set COM Hardware Configuration
         cmd(0x12);  // COM Hardware Configuration
         cmd(0x81);  // Set Contrast
@@ -42,6 +37,7 @@ namespace oledssd1306 {
         cmd(0x40);  // VCOMH Deselect Level
         cmd(0xA4);  // Set all pixels OFF
         cmd(0xA6);  // Set display not inverted
+        cmd(0x20);  // memory adressing mode to page adressing mode
         cmd(0xAF);  // Set display On
         clearDisplay();
     }
@@ -49,14 +45,14 @@ namespace oledssd1306 {
     /**
      * Löscht das gesamte Display.
      */
-    //% blockId=oledssd1306_clear_display
+    //% blockId=oledm5sh1107_clear_display
     //% block="lösche Display"
     export function clearDisplay() {
         cmd(DISPLAY_OFF);   //display off
-        for (let j = 0; j < 8; j++) {
+        for (let j = 0; j < 16; j++) {
             setTextXY(j, 0);
             {
-                for (let i = 0; i < 16; i++)  //clear all columns
+                for (let i = 0; i < 8; i++)  //clear all columns
                 {
                     putChar(' ');
                 }
@@ -71,7 +67,7 @@ namespace oledssd1306 {
      * Cursorposition.
      * @param n Number of characters to delete
      */
-    //% blockId=oledssd1306_clear_range
+    //% blockId=oledm5sh1107_clear_range
     //% block="lösche %n| Zeichen"
     export function clearRange(n: number) {
         for (let i = 0; i < n; i++) {
@@ -82,21 +78,22 @@ namespace oledssd1306 {
     /**
      * Bewegt den Cursor an eine neue Position.
      */
-    //% row.min=0 row.max=7
-    //% column.min=0 column.max=15
-    //% blockId=oledssd1306_set_text
+    //% row.min=0 row.max=15
+    //% column.min=0 column.max=7
+    //% blockId=oledm5sh1107_set_text
     //% block="setze Cursor auf Zeile %row| und Spalte %column"
     export function setTextXY(row: number, column: number) {
         let r = row;
         let c = column;
         if (row < 0) { r = 0 }
         if (column < 0) { c = 0 }
-        if (row > 7) { r = 7 }
-        if (column > 15) { c = 15 }
+        if (row > 15) { r = 15 }
+        if (column > 7) { c = 7 }
 
         cmd(0xB0 + r);            //set page address
         cmd(0x00 + (8 * c & 0x0F));  //set column lower address
         cmd(0x10 + ((8 * c >> 4) & 0x0F));   //set column higher address
+
     }
 
     /**
@@ -127,10 +124,9 @@ namespace oledssd1306 {
     /**
      * Schreibt einen String an der aktuellen Cursorposition auf das Display.
      */
-    //% blockId=oledssd1306_write_string
-    //% block="schreibe einen Text %s|auf das Display"
+    //% blockId=oledm5sh1107_write_string
+    //% block="schreibe %s|auf das Display"
     export function writeString(s: string) {
-        putChar('C');
         for (let c of s) {
             putChar(c);
         }
@@ -139,16 +135,16 @@ namespace oledssd1306 {
     /**
       * Schreibt eine Zahl an der aktuellen Cursorposition auf das Display.
       */
-    //% blockId=oledssd1306_write_number
+    //% blockId=oledm5sh1107_write_number
     //% block="schreibe Zahl %n|auf das Display"
     export function writeNumber(n: number) {
-        oledssd1306.writeString("" + n)
+        oledm5sh1107.writeString("" + n)
    }
 
     /**
      * Ändert das Display zu weißer Schrift auf schwarzem Hintergrund.
      */
-    //% blockId=oledssd1306_normal_display advanced=true
+    //% blockId=oledm5sh1107_normal_display advanced=true
     //% block="weiss auf schwarz"
     export function normalDisplay() {
         cmd(NORMAL_DISPLAY);
@@ -157,7 +153,7 @@ namespace oledssd1306 {
     /**
      * Ändert das Display zu schwarzer Schrift auf weißem Hintergrund.
      */
-    //% blockId=oledssd1306_invert_display advanced=true
+    //% blockId=oledm5sh1107_invert_display advanced=true
     //% block="schwarz auf weiss"
     export function invertDisplay() {
         cmd(INVERT_DISPLAY);
@@ -166,7 +162,7 @@ namespace oledssd1306 {
     /**
      * Dreht den Displayinhalt auf den Kopf.
      */
-    //% blockId=oledssd1306_flip_screen advanced=true
+    //% blockId=oledm5sh1107_flip_screen advanced=true
     //% block="drehe Display"
     export function flipScreen() {
         cmd(DISPLAY_OFF);
