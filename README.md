@@ -1,11 +1,6 @@
-# pxt-oled-M5-SSH1107-1.3-128x64
+# pxt-oled-M5Stack-SH1107-1.3-128x64
 
-
-
-## TODO
-
--  Add a reference for my blocks here
-
+Makecode Blocks for M5Stack SH1107 OLED display with 128x64 pixels and 1.3\" size.
 
 ## License
 
